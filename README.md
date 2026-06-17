@@ -2,6 +2,24 @@
 
 Web đơn giản để nhập liệu và lưu trữ thông tin khách hàng. Hình ảnh lưu base64 trong SQLite, không cần server media riêng.
 
+## 🚀 Cài đặt & chạy nhanh
+
+> Yêu cầu **Node.js >= 22** (đã test trên Node 26). Không cần cài thêm database.
+
+```bash
+git clone git@github.com:thuongtamduy/g-quick-crm.git
+cd g-quick-crm
+npm install
+npm start
+```
+
+Mở **http://localhost:3000** → đăng nhập lần đầu bằng **admin / admin** (hệ thống sẽ bắt đổi mật khẩu ngay).
+
+- Giao diện **V1** (đơn giản): `/`
+- Giao diện **V2** (GQCRM, hiện đại): `/v2/`
+- (Tùy chọn) tạo 10 khách hàng mẫu: `node seed.js` — thêm `--reset` để xóa sạch rồi seed lại.
+- Đổi cổng: `PORT=8080 npm start`
+
 ## Công nghệ
 
 - **Backend**: Node.js + Express
@@ -10,17 +28,6 @@ Web đơn giản để nhập liệu và lưu trữ thông tin khách hàng. Hì
 - **Auth**: Đăng nhập bằng session (cookie httpOnly), mật khẩu băm `scrypt`. Có trang login, đăng xuất, đổi mật khẩu, quản lý user (admin)
 - **Ảnh**: nén + lưu base64 (data URL) trong DB
 
-> Yêu cầu Node.js >= 22 (đã test trên Node 26).
-
-## Chạy
-
-```bash
-npm install
-npm start
-```
-
-Mở http://localhost:3000 → tự chuyển tới trang đăng nhập.
-
 ## Đăng nhập & quản lý người dùng
 
 - Lần đầu (DB trống) hệ thống tự tạo tài khoản **admin / admin** và **bắt buộc đổi mật khẩu ngay lần đăng nhập đầu**.
@@ -28,14 +35,8 @@ Mở http://localhost:3000 → tự chuyển tới trang đăng nhập.
 - **Admin** có thể: tạo người dùng mới, đặt lại mật khẩu, xóa user. Người dùng mới luôn phải đổi mật khẩu ở lần đăng nhập đầu.
 - Vai trò: `admin` (quản lý user) và `user` (chỉ dùng CRM + đổi mật khẩu của mình).
 
-## Đổi cổng
-
-```bash
-PORT=8080 npm start
-```
-
-Reset toàn bộ tài khoản về mặc định (nếu quên mật khẩu admin): xóa bảng user rồi khởi động lại —
-`node -e "require('./db').exec('DELETE FROM sessions; DELETE FROM users;')"` rồi `npm start`.
+> 💡 **Quên mật khẩu admin?** Xóa bảng user rồi khởi động lại để hệ thống tạo lại `admin/admin`:
+> `node -e "require('./db').exec('DELETE FROM sessions; DELETE FROM users;')"` → `npm start`.
 
 ## Các trường dữ liệu
 
