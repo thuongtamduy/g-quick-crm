@@ -141,14 +141,16 @@ kbd {
 .hello { flex: 1; min-width: 0; }
 .hello h1 { margin: 0; font-size: 26px; letter-spacing: -.3px; }
 .hello p { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
-.topline-actions { display: flex; align-items: center; gap: 12px; }
+.topline-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
 .searchbox {
   display: flex; align-items: center; gap: 8px; padding: 0 14px;
   background: var(--surface); border: 1px solid var(--border); border-radius: 13px; height: 44px;
+  flex: 1 1 240px; min-width: 220px; max-width: 360px; /* không bị bóp khi thêm nút */
   transition: border-color .2s, box-shadow .2s;
 }
 .searchbox:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(124, 92, 255, .15); }
-.searchbox input { background: none; border: none; outline: none; color: var(--text); font-size: 14px; width: 240px; }
+.searchbox input { flex: 1; min-width: 0; background: none; border: none; outline: none; color: var(--text); font-size: 14px; }
+.topline-actions .btn { flex: 0 0 auto; white-space: nowrap; }
 .searchbox input::placeholder { color: var(--muted); }
 
 /* KPIs */
@@ -245,7 +247,8 @@ kbd {
 .btn.danger:hover { background: rgba(255, 90, 110, .12); }
 .btn.small { height: 36px; padding: 0 13px; font-size: 13px; }
 .btn .plus { font-size: 17px; }
-.icon-btn { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 18px; width: 34px; height: 34px; border-radius: 9px; }
+.icon-btn { display: inline-grid; place-items: center; background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 18px; width: 34px; height: 34px; border-radius: 9px; }
+.icon-btn svg { display: block; }
 .icon-btn:hover { background: var(--surface); color: var(--text); }
 
 .lbl { font-size: 12.5px; color: var(--muted); margin-bottom: 6px; display: block; }
@@ -397,8 +400,7 @@ img.zoomable { cursor: zoom-in; }
   .topline { flex-wrap: wrap; }
   .hello { order: 2; flex-basis: 100%; }
   .topline-actions { order: 3; flex-basis: 100%; }
-  .searchbox { flex: 1; }
-  .searchbox input { width: 100%; }
+  .searchbox { flex: 1 1 100%; max-width: none; min-width: 0; }
   .hello h1 { font-size: 22px; }
 }
 @media (max-width: 480px) {
