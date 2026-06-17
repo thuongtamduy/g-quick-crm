@@ -401,6 +401,9 @@ img.zoomable { cursor: zoom-in; }
   .hello { order: 2; flex-basis: 100%; }
   .topline-actions { order: 3; flex-basis: 100%; }
   .searchbox { flex: 1 1 100%; max-width: none; min-width: 0; }
+  /* Hàng nút: Thêm to hơn & bên trái, CSV nhỏ hơn & bên phải */
+  #btnNew { order: 1; flex: 2 1 0; }
+  #btnExport { order: 2; flex: 1 1 0; }
   .hello h1 { font-size: 22px; }
 }
 @media (max-width: 480px) {
