@@ -1,195 +1,224 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quản lý khách hàng</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>GQCRM · 2026</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <span class="logo">📇</span>
-      <div>
-        <h1>Quản lý khách hàng</h1>
-        <small id="userTag"></small>
-      </div>
-    </div>
-    <div class="actions">
-      <input id="search" type="search" placeholder="🔍 Tìm tên, SĐT, email, công ty..." />
-      <a href="/v2/" class="btn" style="text-decoration:none;display:inline-flex;align-items:center">✨ Thử giao diện V2</a>
-      <button id="btnAccount" class="btn">👤 Tài khoản</button>
-      <button id="btnLogout" class="btn ghost">Đăng xuất</button>
-      <button id="btnNew" class="btn primary">+ Thêm khách hàng</button>
-    </div>
-  </header>
+  <div class="mesh" aria-hidden="true"></div>
 
-  <main>
-    <div id="stats" class="stats"></div>
-    <div id="list" class="list"></div>
-    <div id="empty" class="empty hidden">Chưa có dữ liệu. Bấm “+ Thêm khách hàng”.</div>
-  </main>
-
-  <!-- Modal form -->
-  <div id="modal" class="modal hidden">
-    <div class="modal-card">
-      <div class="modal-head">
-        <h2 id="modalTitle">Thêm khách hàng</h2>
-        <button class="icon-btn" id="btnClose">✕</button>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">GQ</div>
+        <div class="brand-text">
+          <strong>GQCRM</strong>
+          <span>CRM · 2026</span>
+        </div>
+        <button class="rail-close" id="railClose" aria-label="Đóng">✕</button>
       </div>
 
-      <form id="form" class="form">
+      <button class="ghost-search" id="openPalette">
+        <span>🔎 Tìm nhanh</span>
+        <kbd>⌘K</kbd>
+      </button>
+
+      <nav class="nav" id="industryNav"></nav>
+
+      <div class="sidebar-foot">
+        <button class="theme-toggle" id="themeToggle">
+          <span class="ti-dark">🌙 Tối</span>
+          <span class="ti-light">☀️ Sáng</span>
+        </button>
+        <div class="me">
+          <button class="me-main" id="openAccount" title="Tài khoản">
+            <div class="me-avatar" id="meAvatar">A</div>
+            <div class="me-info">
+              <strong id="meName">admin</strong>
+              <span id="meRole">Tài khoản</span>
+            </div>
+          </button>
+          <button class="icon-btn" id="btnLogout" title="Đăng xuất">⏻</button>
+        </div>
+      </div>
+    </aside>
+    <div class="scrim" id="sidebarScrim"></div>
+
+    <!-- Main -->
+    <main class="main">
+      <header class="topline">
+        <button class="rail-open" id="railOpen" aria-label="Menu">☰</button>
+        <div class="hello">
+          <h1 id="greeting">Khách hàng</h1>
+          <p id="subtitle">Đang tải…</p>
+        </div>
+        <div class="topline-actions">
+          <div class="searchbox">
+            <span>🔎</span>
+            <input id="search" type="search" placeholder="Tìm tên, công ty, email…" />
+          </div>
+          <button class="btn primary" id="btnNew"><span class="plus">＋</span> Thêm</button>
+        </div>
+      </header>
+
+      <section class="kpis" id="kpis"></section>
+
+      <section class="content" id="content"></section>
+      <div class="empty hidden" id="empty">
+        <div class="empty-mark">🗂️</div>
+        <p>Chưa có khách hàng nào.</p>
+        <button class="btn primary" id="btnEmptyNew">＋ Thêm khách hàng đầu tiên</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Detail drawer -->
+  <div class="drawer-wrap hidden" id="detailWrap">
+    <div class="drawer-scrim" data-close-detail></div>
+    <aside class="drawer" id="detailDrawer">
+      <div class="drawer-head">
+        <h2>Hồ sơ khách hàng</h2>
+        <button class="icon-btn" data-close-detail>✕</button>
+      </div>
+      <div class="drawer-body" id="detailBody"></div>
+      <div class="drawer-foot">
+        <button class="btn danger ghost" id="btnDelete">🗑 Xóa</button>
+        <button class="btn primary" id="btnEdit">✏️ Chỉnh sửa</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Form drawer -->
+  <div class="drawer-wrap hidden" id="formWrap">
+    <div class="drawer-scrim" data-close-form></div>
+    <aside class="drawer wide" id="formDrawer">
+      <div class="drawer-head">
+        <h2 id="formTitle">Thêm khách hàng</h2>
+        <button class="icon-btn" data-close-form>✕</button>
+      </div>
+      <form id="form" class="drawer-body">
         <input type="hidden" id="customerId" />
 
-        <div class="grid">
-          <div class="avatar-block">
-            <label>Ảnh đại diện</label>
-            <div class="avatar-wrap">
-              <img id="avatarPreview" class="avatar" alt="avatar" />
-              <div id="avatarPlaceholder" class="avatar placeholder">👤</div>
-            </div>
-            <input type="file" id="avatarInput" accept="image/*" hidden />
-            <div class="avatar-actions">
+        <div class="avatar-row">
+          <div class="avatar-ring">
+            <img id="avatarPreview" class="avatar hidden" alt="" />
+            <div id="avatarPlaceholder" class="avatar ph">👤</div>
+          </div>
+          <div class="avatar-cta">
+            <label class="lbl">Ảnh đại diện</label>
+            <div class="row-btns">
               <button type="button" class="btn small" id="btnPickAvatar">Tải ảnh</button>
               <button type="button" class="btn small ghost" id="btnClearAvatar">Xóa</button>
             </div>
-          </div>
-
-          <div class="fields">
-            <div class="field">
-              <label>Họ tên <span class="req">*</span></label>
-              <input id="full_name" required placeholder="Nguyễn Văn A" />
-            </div>
-            <div class="two">
-              <div class="field">
-                <label>Số điện thoại</label>
-                <input id="phone" placeholder="09xx xxx xxx" />
-              </div>
-              <div class="field">
-                <label>Email</label>
-                <input id="email" type="email" placeholder="email@congty.com" />
-              </div>
-            </div>
-            <div class="two">
-              <div class="field">
-                <label>Công ty</label>
-                <input id="company" list="companyList" placeholder="Công ty TNHH ABC" />
-                <datalist id="companyList"></datalist>
-              </div>
-              <div class="field">
-                <label>Bộ phận</label>
-                <input id="department" placeholder="Kinh doanh" />
-              </div>
-            </div>
-            <div class="two">
-              <div class="field">
-                <label>Chức vụ</label>
-                <input id="position" placeholder="Trưởng phòng" />
-              </div>
-              <div class="field">
-                <label>Lĩnh vực</label>
-                <select id="industry"></select>
-              </div>
-            </div>
+            <input type="file" id="avatarInput" accept="image/*" hidden />
           </div>
         </div>
 
         <div class="field">
-          <label>Ghi chú</label>
-          <textarea id="note" rows="2" placeholder="Ghi chú thêm..."></textarea>
+          <label class="lbl">Họ tên <span class="req">*</span></label>
+          <input id="full_name" required placeholder="Nguyễn Văn A" />
+        </div>
+        <div class="two">
+          <div class="field"><label class="lbl">Số điện thoại</label><input id="phone" placeholder="09xx xxx xxx" /></div>
+          <div class="field"><label class="lbl">Email</label><input id="email" type="email" placeholder="email@congty.com" /></div>
+        </div>
+        <div class="two">
+          <div class="field">
+            <label class="lbl">Công ty</label>
+            <input id="company" list="companyList" placeholder="Công ty TNHH ABC" />
+            <datalist id="companyList"></datalist>
+          </div>
+          <div class="field"><label class="lbl">Bộ phận</label><input id="department" placeholder="Kinh doanh" /></div>
+        </div>
+        <div class="two">
+          <div class="field"><label class="lbl">Chức vụ</label><input id="position" placeholder="Trưởng phòng" /></div>
+          <div class="field"><label class="lbl">Lĩnh vực</label><select id="industry"></select></div>
+        </div>
+        <div class="field">
+          <label class="lbl">Ghi chú</label>
+          <textarea id="note" rows="2" placeholder="Ghi chú thêm…"></textarea>
         </div>
 
         <div class="products-head">
           <h3>Sản phẩm</h3>
-          <button type="button" class="btn small" id="btnAddProduct">+ Thêm sản phẩm</button>
+          <button type="button" class="btn small" id="btnAddProduct">＋ Thêm sản phẩm</button>
         </div>
         <div id="products" class="products"></div>
-
-        <div class="modal-foot">
-          <button type="button" class="btn ghost" id="btnCancel">Hủy</button>
-          <button type="submit" class="btn primary" id="btnSave">Lưu</button>
-        </div>
       </form>
-    </div>
+      <div class="drawer-foot">
+        <button type="button" class="btn ghost" data-close-form>Hủy</button>
+        <button type="submit" form="form" class="btn primary" id="btnSave">Lưu</button>
+      </div>
+    </aside>
   </div>
 
-  <!-- Detail viewer -->
-  <div id="viewer" class="modal hidden">
-    <div class="modal-card">
-      <div class="modal-head">
-        <h2 id="viewerTitle">Chi tiết</h2>
-        <button class="icon-btn" id="btnCloseViewer">✕</button>
-      </div>
-      <div id="viewerBody" class="viewer-body"></div>
-      <div class="modal-foot">
-        <button type="button" class="btn danger ghost" id="btnDelete">Xóa</button>
-        <button type="button" class="btn primary" id="btnEdit">Sửa</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal tài khoản -->
-  <div id="accountModal" class="modal hidden">
-    <div class="modal-card" style="max-width:560px">
-      <div class="modal-head">
+  <!-- Account drawer -->
+  <div class="drawer-wrap hidden" id="accountWrap">
+    <div class="drawer-scrim" data-close-account></div>
+    <aside class="drawer" id="accountDrawer">
+      <div class="drawer-head">
         <h2>Tài khoản & Người dùng</h2>
-        <button class="icon-btn" id="btnCloseAccount">✕</button>
+        <button class="icon-btn" data-close-account>✕</button>
       </div>
-      <div class="form">
-        <h3 style="margin:0 0 10px">Đổi mật khẩu của tôi</h3>
+      <div class="drawer-body" id="accountBody">
+        <div class="sec-title">Đổi mật khẩu của tôi</div>
         <form id="pwForm">
-          <div class="field"><label>Mật khẩu hiện tại</label><input id="curPass" type="password" autocomplete="current-password" /></div>
-          <div class="field"><label>Mật khẩu mới</label><input id="newPass" type="password" autocomplete="new-password" placeholder="Tối thiểu 4 ký tự" /></div>
-          <button type="submit" class="btn primary">Cập nhật mật khẩu</button>
+          <div class="field"><label class="lbl">Mật khẩu hiện tại</label><input id="curPass" type="password" autocomplete="current-password" /></div>
+          <div class="field"><label class="lbl">Mật khẩu mới</label><input id="newPass" type="password" autocomplete="new-password" placeholder="Tối thiểu 4 ký tự" /></div>
+          <button type="submit" class="btn primary" style="width:100%">Cập nhật mật khẩu</button>
         </form>
 
         <div id="adminArea" class="hidden">
-          <hr style="border:none;border-top:1px solid var(--line);margin:22px 0" />
-          <h3 style="margin:0 0 10px">Tạo người dùng mới</h3>
+          <div class="sec-title" style="margin-top:26px">Tạo người dùng mới</div>
           <form id="userForm">
             <div class="two">
-              <div class="field"><label>Tên đăng nhập</label><input id="nuName" autocomplete="off" /></div>
-              <div class="field"><label>Mật khẩu</label><input id="nuPass" type="text" autocomplete="off" placeholder="Tối thiểu 4 ký tự" /></div>
+              <div class="field"><label class="lbl">Tên đăng nhập</label><input id="nuName" autocomplete="off" /></div>
+              <div class="field"><label class="lbl">Mật khẩu</label><input id="nuPass" type="text" autocomplete="off" placeholder="Tối thiểu 4 ký tự" /></div>
             </div>
             <div class="field">
-              <label>Vai trò</label>
+              <label class="lbl">Vai trò</label>
               <select id="nuRole"><option value="user">Người dùng</option><option value="admin">Quản trị (admin)</option></select>
             </div>
-            <button type="submit" class="btn">+ Tạo người dùng</button>
-            <p style="font-size:13px;color:var(--muted)">Người dùng mới phải đổi mật khẩu khi đăng nhập lần đầu.</p>
+            <button type="submit" class="btn" style="width:100%">＋ Tạo người dùng</button>
+            <p class="hint-small">Người dùng mới sẽ bắt buộc đổi mật khẩu khi đăng nhập lần đầu.</p>
           </form>
-          <h3 style="margin:16px 0 10px">Danh sách người dùng</h3>
-          <div id="userList"></div>
+
+          <div class="sec-title" style="margin-top:26px">Danh sách người dùng</div>
+          <div id="userList" class="user-list"></div>
         </div>
       </div>
+    </aside>
+  </div>
+
+  <!-- Command palette -->
+  <div class="palette-wrap hidden" id="paletteWrap">
+    <div class="palette">
+      <input id="paletteInput" placeholder="Tìm khách hàng, công ty, email…" autocomplete="off" />
+      <div class="palette-results" id="paletteResults"></div>
+      <div class="palette-foot"><kbd>↵</kbd> mở · <kbd>esc</kbd> đóng</div>
     </div>
   </div>
 
-  <!-- Lightbox xem ảnh phóng to -->
+  <!-- Lightbox -->
   <div id="lightbox" class="lightbox hidden">
     <button class="lightbox-close" aria-label="Đóng">✕</button>
     <img id="lightboxImg" alt="ảnh phóng to" />
   </div>
 
-  <!-- Template cho 1 sản phẩm -->
+  <div class="toasts" id="toasts"></div>
+
   <template id="productTpl">
     <div class="product-card">
-      <button type="button" class="icon-btn remove-product" title="Xóa sản phẩm">🗑️</button>
+      <button type="button" class="icon-btn remove-product" title="Xóa">🗑</button>
       <div class="two">
-        <div class="field">
-          <label>Tên sản phẩm</label>
-          <input class="p-name" placeholder="Tên sản phẩm" />
-        </div>
-        <div class="field">
-          <label>Giá</label>
-          <input class="p-price" placeholder="1.000.000 đ" />
-        </div>
+        <div class="field"><label class="lbl">Tên sản phẩm</label><input class="p-name" placeholder="Tên sản phẩm" /></div>
+        <div class="field"><label class="lbl">Giá</label><input class="p-price" placeholder="1.000.000 đ" /></div>
       </div>
-      <div class="field">
-        <label>Ghi chú sản phẩm</label>
-        <textarea class="p-note" rows="2" placeholder="Mô tả, ghi chú..."></textarea>
-      </div>
-      <label>Hình ảnh (tối đa 3)</label>
+      <div class="field"><label class="lbl">Ghi chú</label><textarea class="p-note" rows="2" placeholder="Mô tả…"></textarea></div>
+      <label class="lbl">Hình ảnh (tối đa 3)</label>
       <div class="p-images">
         <div class="p-img-slot" data-idx="0"></div>
         <div class="p-img-slot" data-idx="1"></div>

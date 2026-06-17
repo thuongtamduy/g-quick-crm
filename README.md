@@ -15,8 +15,7 @@ npm start
 
 Mở **http://localhost:4444** → đăng nhập lần đầu bằng **admin / admin** (hệ thống sẽ bắt đổi mật khẩu ngay).
 
-- Giao diện **V1** (đơn giản): `/`
-- Giao diện **V2** (GQCRM, hiện đại): `/v2/`
+- Giao diện **GQCRM** (dark-mode, sidebar lọc lĩnh vực, drawer, ⌘K, lightbox) tại `/`.
 - (Tùy chọn) tạo 10 khách hàng mẫu: `node seed.js` — thêm `--reset` để xóa sạch rồi seed lại.
 - Đổi cổng: `PORT=8080 npm start`
 
@@ -31,7 +30,7 @@ Mở **http://localhost:4444** → đăng nhập lần đầu bằng **admin / a
 ## Đăng nhập & quản lý người dùng
 
 - Lần đầu (DB trống) hệ thống tự tạo tài khoản **admin / admin** và **bắt buộc đổi mật khẩu ngay lần đăng nhập đầu**.
-- **Đăng xuất**, **đổi mật khẩu**: ở mục "Tài khoản" (V1) hoặc khu vực tài khoản dưới sidebar (V2).
+- **Đăng xuất**, **đổi mật khẩu**: ở khu vực tài khoản dưới sidebar.
 - **Admin** có thể: tạo người dùng mới, đặt lại mật khẩu, xóa user. Người dùng mới luôn phải đổi mật khẩu ở lần đăng nhập đầu.
 - Vai trò: `admin` (quản lý user) và `user` (chỉ dùng CRM + đổi mật khẩu của mình).
 
@@ -57,13 +56,12 @@ Mở **http://localhost:4444** → đăng nhập lần đầu bằng **admin / a
 server.js        # Express + API + session auth
 db.js            # Khởi tạo SQLite & schema (customers, products, users, sessions)
 public/
-  login.html     # Trang đăng nhập (chung cho V1 & V2)
+  login.html     # Trang đăng nhập
   login.js
-  index.html     # Giao diện V1
+  index.html     # Giao diện GQCRM (dark-mode, sidebar, drawer, ⌘K…)
   style.css
   app.js
-  v2/            # Giao diện V2 "Nexus" (dark-mode, drawer, ⌘K…)
-    index.html  style.css  app.js
+ecosystem.config.js  # Cấu hình PM2 (app g-q-crm)
 data.sqlite      # DB tự tạo khi chạy (đã .gitignore)
 ```
 
