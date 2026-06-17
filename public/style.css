@@ -198,10 +198,12 @@ img.zoomable { cursor: zoom-in; }
   .brand h1 { font-size: 16px; }
   .brand .logo { font-size: 24px; }
 
-  /* Thanh trên cùng: tìm kiếm + nút chiếm trọn chiều ngang, dễ bấm */
-  .actions { width: 100%; }
-  .actions input[type="search"] { width: 100%; max-width: none; flex: 1; }
-  #btnNew { white-space: nowrap; }
+  /* Thanh trên cùng xếp dọc: thương hiệu trên, rồi search full-width, rồi hàng nút */
+  .topbar { flex-direction: column; align-items: stretch; }
+  .actions { width: 100%; flex-wrap: wrap; gap: 8px; }
+  /* flex-basis 100% buộc search chiếm trọn 1 hàng (không bị co về 0) */
+  .actions input[type="search"] { flex: 1 1 100%; width: 100%; max-width: none; min-width: 0; order: -1; }
+  .actions .btn { flex: 1 1 auto; white-space: nowrap; justify-content: center; }
 
   main { padding: 14px 14px 48px; }
 
