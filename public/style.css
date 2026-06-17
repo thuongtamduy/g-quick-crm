@@ -138,14 +138,14 @@ kbd {
 .main { padding: 26px 30px 60px; min-width: 0; }
 .topline { display: flex; align-items: center; gap: 18px; margin-bottom: 24px; }
 .rail-open { display: none; }
-.hello { flex: 1; min-width: 0; }
+.hello { flex: 0 1 auto; min-width: 0; }
 .hello h1 { margin: 0; font-size: 26px; letter-spacing: -.3px; }
 .hello p { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
-.topline-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+.topline-actions { display: flex; align-items: center; gap: 12px; flex: 1 1 auto; flex-wrap: wrap; justify-content: flex-end; }
 .searchbox {
   display: flex; align-items: center; gap: 8px; padding: 0 14px;
   background: var(--surface); border: 1px solid var(--border); border-radius: 13px; height: 44px;
-  flex: 1 1 240px; min-width: 220px; max-width: 360px; /* không bị bóp khi thêm nút */
+  flex: 1 1 auto; min-width: 220px; /* giãn lấp khoảng giữa, đẩy 2 nút sang phải */
   transition: border-color .2s, box-shadow .2s;
 }
 .searchbox:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(124, 92, 255, .15); }
