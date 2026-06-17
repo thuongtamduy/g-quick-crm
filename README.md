@@ -13,7 +13,7 @@ npm install
 npm start
 ```
 
-Mở **http://localhost:3000** → đăng nhập lần đầu bằng **admin / admin** (hệ thống sẽ bắt đổi mật khẩu ngay).
+Mở **http://localhost:4444** → đăng nhập lần đầu bằng **admin / admin** (hệ thống sẽ bắt đổi mật khẩu ngay).
 
 - Giao diện **V1** (đơn giản): `/`
 - Giao diện **V2** (GQCRM, hiện đại): `/v2/`

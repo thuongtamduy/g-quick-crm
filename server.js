@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const db = require('./db');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4444;
 
 // ---- Mật khẩu (scrypt, built-in) ----
 function hashPassword(password, salt = crypto.randomBytes(16).toString('hex')) {
