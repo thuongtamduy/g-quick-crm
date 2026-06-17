@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng nhập · CRM</title>
+  <style>
+    :root { --accent: #0ea36b; --accent-dark: #0b855a; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 20px;
+      font-family: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: #1c2733; background: #eef2f5;
+    }
+    .card {
+      width: 100%; max-width: 380px;
+      background: #fff; border: 1px solid #e6ebef; border-radius: 18px;
+      padding: 34px 30px; box-shadow: 0 12px 40px rgba(30, 50, 70, .10);
+    }
+    .logo { width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center;
+      background: var(--accent); font-size: 18px; font-weight: 800; letter-spacing: .5px; color: #fff; margin-bottom: 18px; }
+    h1 { margin: 0 0 4px; font-size: 22px; }
+    p.sub { margin: 0 0 24px; color: #6b7785; font-size: 14px; }
+    label { display: block; font-size: 13px; color: #6b7785; margin: 14px 0 6px; }
+    input {
+      width: 100%; padding: 12px 14px; font-size: 16px; color: #1c2733;
+      background: #f6f8fa; border: 1px solid #dde3e8;
+      border-radius: 12px; outline: none; transition: border-color .15s, box-shadow .15s;
+    }
+    input:focus { background: #fff; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(14,163,107,.14); }
+    button {
+      width: 100%; margin-top: 22px; padding: 13px; font-size: 15px; font-weight: 700; color: #fff;
+      background: var(--accent); border: none; border-radius: 12px; cursor: pointer;
+      transition: background .15s, transform .1s;
+    }
+    button:hover { background: var(--accent-dark); }
+    button:active { transform: translateY(1px); }
+    button:disabled { opacity: .6; cursor: default; }
+    .msg { margin-top: 16px; font-size: 13px; padding: 10px 12px; border-radius: 10px; display: none; }
+    .msg.err { display: block; background: #fdecec; border: 1px solid #f3c4c4; color: #c0392b; }
+    .msg.ok { display: block; background: #e7f7ef; border: 1px solid #b6e6cf; color: #0b7a4f; }
+    .hint { margin-top: 18px; text-align: center; font-size: 12px; color: #97a2ad; }
+    .hint b { color: #6b7785; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">GQ</div>
+
+    <!-- Bước 1: đăng nhập -->
+    <form id="loginForm">
+      <h1>Đăng nhập</h1>
+      <p class="sub">GQCRM · quản lý khách hàng</p>
+      <label>Tên đăng nhập</label>
+      <input id="username" autocomplete="username" autofocus placeholder="admin" />
+      <label>Mật khẩu</label>
+      <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" />
+      <button type="submit" id="loginBtn">Đăng nhập →</button>
+      <div class="hint">Lần đầu: <b>admin</b> / <b>admin</b></div>
+    </form>
+
+    <!-- Bước 2: bắt buộc đổi mật khẩu -->
+    <form id="changeForm" style="display:none">
+      <h1>Đổi mật khẩu</h1>
+      <p class="sub">Lần đầu đăng nhập — hãy đặt mật khẩu mới.</p>
+      <label>Mật khẩu mới</label>
+      <input id="newPass" type="password" autocomplete="new-password" placeholder="Tối thiểu 4 ký tự" />
+      <label>Nhập lại mật khẩu mới</label>
+      <input id="newPass2" type="password" autocomplete="new-password" placeholder="Nhập lại" />
+      <button type="submit" id="changeBtn">Lưu & tiếp tục →</button>
+    </form>
+
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <script src="login.js"></script>
+</body>
+</html>

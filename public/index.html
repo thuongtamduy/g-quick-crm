@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản lý khách hàng</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">📇</span>
+      <div>
+        <h1>Quản lý khách hàng</h1>
+        <small id="userTag"></small>
+      </div>
+    </div>
+    <div class="actions">
+      <input id="search" type="search" placeholder="🔍 Tìm tên, SĐT, email, công ty..." />
+      <a href="/v2/" class="btn" style="text-decoration:none;display:inline-flex;align-items:center">✨ Thử giao diện V2</a>
+      <button id="btnAccount" class="btn">👤 Tài khoản</button>
+      <button id="btnLogout" class="btn ghost">Đăng xuất</button>
+      <button id="btnNew" class="btn primary">+ Thêm khách hàng</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="stats" class="stats"></div>
+    <div id="list" class="list"></div>
+    <div id="empty" class="empty hidden">Chưa có dữ liệu. Bấm “+ Thêm khách hàng”.</div>
+  </main>
+
+  <!-- Modal form -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="modalTitle">Thêm khách hàng</h2>
+        <button class="icon-btn" id="btnClose">✕</button>
+      </div>
+
+      <form id="form" class="form">
+        <input type="hidden" id="customerId" />
+
+        <div class="grid">
+          <div class="avatar-block">
+            <label>Ảnh đại diện</label>
+            <div class="avatar-wrap">
+              <img id="avatarPreview" class="avatar" alt="avatar" />
+              <div id="avatarPlaceholder" class="avatar placeholder">👤</div>
+            </div>
+            <input type="file" id="avatarInput" accept="image/*" hidden />
+            <div class="avatar-actions">
+              <button type="button" class="btn small" id="btnPickAvatar">Tải ảnh</button>
+              <button type="button" class="btn small ghost" id="btnClearAvatar">Xóa</button>
+            </div>
+          </div>
+
+          <div class="fields">
+            <div class="field">
+              <label>Họ tên <span class="req">*</span></label>
+              <input id="full_name" required placeholder="Nguyễn Văn A" />
+            </div>
+            <div class="two">
+              <div class="field">
+                <label>Số điện thoại</label>
+                <input id="phone" placeholder="09xx xxx xxx" />
+              </div>
+              <div class="field">
+                <label>Email</label>
+                <input id="email" type="email" placeholder="email@congty.com" />
+              </div>
+            </div>
+            <div class="two">
+              <div class="field">
+                <label>Công ty</label>
+                <input id="company" list="companyList" placeholder="Công ty TNHH ABC" />
+                <datalist id="companyList"></datalist>
+              </div>
+              <div class="field">
+                <label>Bộ phận</label>
+                <input id="department" placeholder="Kinh doanh" />
+              </div>
+            </div>
+            <div class="two">
+              <div class="field">
+                <label>Chức vụ</label>
+                <input id="position" placeholder="Trưởng phòng" />
+              </div>
+              <div class="field">
+                <label>Lĩnh vực</label>
+                <select id="industry"></select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Ghi chú</label>
+          <textarea id="note" rows="2" placeholder="Ghi chú thêm..."></textarea>
+        </div>
+
+        <div class="products-head">
+          <h3>Sản phẩm</h3>
+          <button type="button" class="btn small" id="btnAddProduct">+ Thêm sản phẩm</button>
+        </div>
+        <div id="products" class="products"></div>
+
+        <div class="modal-foot">
+          <button type="button" class="btn ghost" id="btnCancel">Hủy</button>
+          <button type="submit" class="btn primary" id="btnSave">Lưu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Detail viewer -->
+  <div id="viewer" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="viewerTitle">Chi tiết</h2>
+        <button class="icon-btn" id="btnCloseViewer">✕</button>
+      </div>
+      <div id="viewerBody" class="viewer-body"></div>
+      <div class="modal-foot">
+        <button type="button" class="btn danger ghost" id="btnDelete">Xóa</button>
+        <button type="button" class="btn primary" id="btnEdit">Sửa</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal tài khoản -->
+  <div id="accountModal" class="modal hidden">
+    <div class="modal-card" style="max-width:560px">
+      <div class="modal-head">
+        <h2>Tài khoản & Người dùng</h2>
+        <button class="icon-btn" id="btnCloseAccount">✕</button>
+      </div>
+      <div class="form">
+        <h3 style="margin:0 0 10px">Đổi mật khẩu của tôi</h3>
+        <form id="pwForm">
+          <div class="field"><label>Mật khẩu hiện tại</label><input id="curPass" type="password" autocomplete="current-password" /></div>
+          <div class="field"><label>Mật khẩu mới</label><input id="newPass" type="password" autocomplete="new-password" placeholder="Tối thiểu 4 ký tự" /></div>
+          <button type="submit" class="btn primary">Cập nhật mật khẩu</button>
+        </form>
+
+        <div id="adminArea" class="hidden">
+          <hr style="border:none;border-top:1px solid var(--line);margin:22px 0" />
+          <h3 style="margin:0 0 10px">Tạo người dùng mới</h3>
+          <form id="userForm">
+            <div class="two">
+              <div class="field"><label>Tên đăng nhập</label><input id="nuName" autocomplete="off" /></div>
+              <div class="field"><label>Mật khẩu</label><input id="nuPass" type="text" autocomplete="off" placeholder="Tối thiểu 4 ký tự" /></div>
+            </div>
+            <div class="field">
+              <label>Vai trò</label>
+              <select id="nuRole"><option value="user">Người dùng</option><option value="admin">Quản trị (admin)</option></select>
+            </div>
+            <button type="submit" class="btn">+ Tạo người dùng</button>
+            <p style="font-size:13px;color:var(--muted)">Người dùng mới phải đổi mật khẩu khi đăng nhập lần đầu.</p>
+          </form>
+          <h3 style="margin:16px 0 10px">Danh sách người dùng</h3>
+          <div id="userList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox xem ảnh phóng to -->
+  <div id="lightbox" class="lightbox hidden">
+    <button class="lightbox-close" aria-label="Đóng">✕</button>
+    <img id="lightboxImg" alt="ảnh phóng to" />
+  </div>
+
+  <!-- Template cho 1 sản phẩm -->
+  <template id="productTpl">
+    <div class="product-card">
+      <button type="button" class="icon-btn remove-product" title="Xóa sản phẩm">🗑️</button>
+      <div class="two">
+        <div class="field">
+          <label>Tên sản phẩm</label>
+          <input class="p-name" placeholder="Tên sản phẩm" />
+        </div>
+        <div class="field">
+          <label>Giá</label>
+          <input class="p-price" placeholder="1.000.000 đ" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Ghi chú sản phẩm</label>
+        <textarea class="p-note" rows="2" placeholder="Mô tả, ghi chú..."></textarea>
+      </div>
+      <label>Hình ảnh (tối đa 3)</label>
+      <div class="p-images">
+        <div class="p-img-slot" data-idx="0"></div>
+        <div class="p-img-slot" data-idx="1"></div>
+        <div class="p-img-slot" data-idx="2"></div>
+      </div>
+    </div>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

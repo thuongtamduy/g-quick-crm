@@ -1,0 +1,13 @@
+{
+  "name": "customer-crm",
+  "version": "1.0.0",
+  "description": "Web nhập liệu và lưu trữ thông tin khách hàng",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
