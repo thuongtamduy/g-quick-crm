@@ -20,10 +20,17 @@ async function api(url, body) {
   return data;
 }
 
+// Tên đăng nhập luôn là chữ thường — hạ ngay khi gõ để tránh lỗi do viết hoa
+$('#username').addEventListener('input', (e) => {
+  const start = e.target.selectionStart;
+  e.target.value = e.target.value.toLowerCase();
+  e.target.setSelectionRange(start, start);
+});
+
 $('#loginForm').onsubmit = async (e) => {
   e.preventDefault();
   clearMsg();
-  const username = $('#username').value.trim();
+  const username = $('#username').value.trim().toLowerCase();
   const password = $('#password').value;
   const btn = $('#loginBtn'); btn.disabled = true; btn.textContent = 'Đang đăng nhập…';
   try {

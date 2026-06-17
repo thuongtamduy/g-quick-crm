@@ -158,15 +158,13 @@
           </div>
           <div class="field">
             <label class="lbl">Bộ phận</label>
-            <input id="department" list="departmentList" placeholder="Chọn hoặc nhập mới…" />
-            <datalist id="departmentList"></datalist>
+            <select id="department"></select>
           </div>
         </div>
         <div class="two">
           <div class="field">
             <label class="lbl">Chức vụ</label>
-            <input id="position" list="positionList" placeholder="Chọn hoặc nhập mới…" />
-            <datalist id="positionList"></datalist>
+            <select id="position"></select>
           </div>
           <div class="field"><label class="lbl">Lĩnh vực</label><select id="industry"></select></div>
         </div>
@@ -236,7 +234,7 @@
           <div class="sec-title" style="margin-top:26px">Tạo người dùng mới</div>
           <form id="userForm">
             <div class="two">
-              <div class="field"><label class="lbl">Tên đăng nhập</label><input id="nuName" autocomplete="off" /></div>
+              <div class="field"><label class="lbl">Tên đăng nhập</label><input id="nuName" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" /></div>
               <div class="field"><label class="lbl">Mật khẩu</label><input id="nuPass" type="text" autocomplete="off" placeholder="Tối thiểu 4 ký tự" /></div>
             </div>
             <div class="field">

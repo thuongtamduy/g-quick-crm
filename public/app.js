@@ -262,13 +262,12 @@ function openForm(c) {
   $('#phone').value = c?.phone || '';
   $('#email').value = c?.email || '';
   $('#company').value = c?.company || '';
-  $('#department').value = c?.department || '';
-  $('#position').value = c?.position || '';
   $('#note').value = c?.note || '';
   $('#industry').innerHTML = '<option value="">— Chọn lĩnh vực —</option>' +
     META.industries.map((i) => `<option value="${esc(i)}">${esc(i)}</option>`).join('');
   $('#industry').value = c?.industry || '';
-  populateDatalists();
+  fillCombo('department', META.departments || [], c?.department);
+  fillCombo('position', META.positions || [], c?.position);
   setAvatar(c?.avatar || null);
   (c?.products || []).forEach(addProductCard);
   $('#detailWrap').classList.add('hidden');
@@ -283,7 +282,7 @@ async function saveForm(e) {
   const id = $('#customerId').value;
   const payload = {
     full_name: $('#full_name').value.trim(), phone: $('#phone').value.trim(), email: $('#email').value.trim(),
-    company: $('#company').value.trim(), department: $('#department').value.trim(), position: $('#position').value.trim(),
+    company: $('#company').value.trim(), department: comboValue('department'), position: comboValue('position'),
     industry: $('#industry').value, note: $('#note').value.trim(), avatar: avatarData, products: collectProducts(),
   };
   if (!payload.full_name) return toast('Vui lòng nhập Họ tên', 'err');
@@ -369,16 +368,21 @@ function palMove(d) {
 function openLightbox(src) { $('#lightboxImg').src = src; $('#lightbox').classList.remove('hidden'); }
 function closeLightbox() { $('#lightbox').classList.add('hidden'); $('#lightboxImg').removeAttribute('src'); }
 
-// ---------- Danh mục: Bộ phận / Chức vụ ----------
-function populateDatalists() {
-  $('#departmentList').innerHTML = (META.departments || []).map((d) => `<option value="${esc(d)}">`).join('');
-  $('#positionList').innerHTML = (META.positions || []).map((p) => `<option value="${esc(p)}">`).join('');
+// ---------- Danh mục: Bộ phận / Chức vụ (chỉ chọn từ danh mục đã tạo) ----------
+function fillCombo(name, options, value) {
+  const sel = $('#' + name);
+  const v = value || '';
+  // giữ giá trị cũ nếu nó không còn trong danh mục, tránh mất dữ liệu khi sửa
+  const opts = (v && !options.includes(v)) ? [v, ...options] : options;
+  sel.innerHTML = '<option value="">— Chọn —</option>' +
+    opts.map((o) => `<option value="${esc(o)}">${esc(o)}</option>`).join('');
+  sel.value = v;
 }
+function comboValue(name) { return $('#' + name).value.trim(); }
 async function refreshCatalogs() {
   const m = await api('GET', '/api/meta');
   META.departments = m.departments || [];
   META.positions = m.positions || [];
-  populateDatalists();
 }
 function openCatalog() {
   $('#catalogWrap').classList.remove('hidden');

@@ -125,7 +125,8 @@ function publicUser(u) {
 
 app.post('/api/auth/login', (req, res) => {
   const { username, password } = req.body || {};
-  const u = db.prepare('SELECT * FROM users WHERE username = ?').get((username || '').trim());
+  // Tên đăng nhập không phân biệt hoa thường (tránh lỗi do viết hoa)
+  const u = db.prepare('SELECT * FROM users WHERE username = ? COLLATE NOCASE').get((username || '').trim().toLowerCase());
   if (!u || !verifyPassword(password || '', u.salt, u.password_hash)) {
     return res.status(401).json({ error: 'Sai tài khoản hoặc mật khẩu' });
   }
@@ -171,10 +172,10 @@ app.get('/api/users', requireAdmin, (req, res) => {
 
 app.post('/api/users', requireAdmin, (req, res) => {
   const { username, password, role } = req.body || {};
-  const name = (username || '').trim();
+  const name = (username || '').trim().toLowerCase(); // luôn lưu chữ thường
   if (!name) return res.status(400).json({ error: 'Tên đăng nhập là bắt buộc' });
   if (!password || password.length < 4) return res.status(400).json({ error: 'Mật khẩu tối thiểu 4 ký tự' });
-  if (db.prepare('SELECT id FROM users WHERE username = ?').get(name)) {
+  if (db.prepare('SELECT id FROM users WHERE username = ? COLLATE NOCASE').get(name)) {
     return res.status(409).json({ error: 'Tên đăng nhập đã tồn tại' });
   }
   const { salt, hash } = hashPassword(password);
@@ -207,13 +208,6 @@ app.delete('/api/users/:id', requireAdmin, (req, res) => {
 
 // ---- Danh mục Bộ phận / Chức vụ ----
 const CATALOGS = { departments: 'departments', positions: 'positions' };
-
-// Thêm giá trị vào danh mục nếu chưa có (dùng khi lưu khách hàng có giá trị custom)
-function ensureCatalogValue(table, name) {
-  const v = (name || '').trim();
-  if (!v) return;
-  db.prepare(`INSERT OR IGNORE INTO ${table} (name) VALUES (?)`).run(v);
-}
 
 for (const [key, table] of Object.entries(CATALOGS)) {
   app.get(`/api/${key}`, (req, res) => {
@@ -372,8 +366,6 @@ app.post('/api/customers', (req, res) => {
       industry: b.industry || null,
       note: b.note || null,
     });
-  ensureCatalogValue('departments', b.department);
-  ensureCatalogValue('positions', b.position);
   saveProducts(info.lastInsertRowid, b.products);
   res.json(getCustomerFull(info.lastInsertRowid));
 });
@@ -406,8 +398,6 @@ app.put('/api/customers/:id', (req, res) => {
     industry: b.industry || null,
     note: b.note || null,
   });
-  ensureCatalogValue('departments', b.department);
-  ensureCatalogValue('positions', b.position);
   saveProducts(id, b.products);
   res.json(getCustomerFull(id));
 });
