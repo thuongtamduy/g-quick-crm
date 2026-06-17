@@ -178,6 +178,12 @@ kbd {
 .group-name { font-size: 16px; font-weight: 650; }
 .group-meta { font-size: 12px; color: var(--muted); }
 .group-line { flex: 1; height: 1px; background: var(--border); }
+.group-del {
+  flex: 0 0 auto; width: 34px; height: 34px; border-radius: 9px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--muted);
+  cursor: pointer; font-size: 15px; transition: background .15s, color .15s, border-color .15s;
+}
+.group-del:hover { background: rgba(255,90,110,.14); color: var(--danger); border-color: rgba(255,90,110,.4); }
 
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
 .card {
@@ -193,6 +199,16 @@ kbd {
 }
 .card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
 .card:hover::before { opacity: 1; }
+.card-del {
+  position: absolute; top: 10px; right: 10px; z-index: 2;
+  width: 30px; height: 30px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--bg-2); color: var(--muted);
+  cursor: pointer; font-size: 14px; opacity: 0; transition: opacity .15s, background .15s, color .15s;
+}
+.card:hover .card-del { opacity: 1; }
+.card-del:hover { background: rgba(255,90,110,.16); color: var(--danger); border-color: rgba(255,90,110,.45); }
+/* Trên thiết bị cảm ứng (không hover) luôn hiện nút xóa */
+@media (hover: none) { .card-del { opacity: 1; } }
 .card-top { display: flex; align-items: center; gap: 12px; }
 .card-avatar { width: 50px; height: 50px; border-radius: 14px; object-fit: cover; flex: 0 0 auto; border: 1px solid var(--border); }
 .card-avatar.ph { display: grid; place-items: center; font-size: 22px; background: var(--surface-2); color: var(--muted); }

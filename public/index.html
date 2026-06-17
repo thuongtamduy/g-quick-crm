@@ -1,9 +1,30 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="dark">
+<html lang="vi" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>GQCRM · 2026</title>
+  <title>GQCRM · Quản lý khách hàng</title>
+  <meta name="description" content="GQCRM — phần mềm quản lý khách hàng gọn nhẹ: nhập liệu, gom nhóm theo công ty, quản lý sản phẩm, bộ phận, chức vụ và phân quyền người dùng." />
+  <meta name="theme-color" content="#eef0f8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="GQCRM" />
+  <meta property="og:title" content="GQCRM · Quản lý khách hàng" />
+  <meta property="og:description" content="Nhập liệu & lưu trữ thông tin khách hàng: gom nhóm công ty, sản phẩm, bộ phận/chức vụ, phân quyền. CRM gọn nhẹ cho doanh nghiệp." />
+  <meta property="og:image" content="{{ORIGIN}}/og-image.svg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="{{ORIGIN}}/" />
+  <meta property="og:locale" content="vi_VN" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GQCRM · Quản lý khách hàng" />
+  <meta name="twitter:description" content="Nhập liệu & lưu trữ thông tin khách hàng: gom nhóm công ty, sản phẩm, bộ phận/chức vụ, phân quyền." />
+  <meta name="twitter:image" content="{{ORIGIN}}/og-image.svg" />
+
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -61,6 +82,7 @@
             <span>🔎</span>
             <input id="search" type="search" placeholder="Tìm tên, công ty, email…" />
           </div>
+          <button class="btn" id="btnExport" title="Xuất danh sách ra CSV (mở bằng Excel)">⬇ CSV</button>
           <button class="btn primary" id="btnNew"><span class="plus">＋</span> Thêm</button>
         </div>
       </header>

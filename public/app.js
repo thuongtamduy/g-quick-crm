@@ -6,6 +6,7 @@ let META = { industries: [], user: '', role: 'user' };
 let ME = { id: 0, username: '', role: 'user' };
 let CURRENT = null;       // khách đang xem
 let DATA = { total: 0, groups: [] };
+let SHOWN_GROUPS = [];    // các nhóm đang hiển thị (để xóa cả công ty)
 let FLAT = [];            // tất cả thành viên (cho palette/filter)
 let activeIndustry = null;
 let avatarData = null;
@@ -137,6 +138,7 @@ function memberCard(m) {
   const role = [m.position, m.department].filter(Boolean).join(' · ');
   return `
     <div class="card" data-id="${m.id}">
+      <button class="card-del" data-del-id="${m.id}" data-name="${esc(m.full_name)}" title="Xóa khách hàng">🗑</button>
       <div class="card-top">
         ${av}
         <div class="card-id">
@@ -171,6 +173,7 @@ function renderContent() {
   const companies = [...new Set(FLAT.map((m) => m.company).filter((c) => c && c !== '(Chưa có công ty)'))];
   $('#companyList').innerHTML = companies.map((c) => `<option value="${esc(c)}">`).join('');
 
+  SHOWN_GROUPS = groups;
   $('#content').innerHTML = groups.map((g) => `
     <div class="group">
       <div class="group-head">
@@ -180,11 +183,37 @@ function renderContent() {
           <div class="group-meta">${g.members.length} người</div>
         </div>
         <div class="group-line"></div>
+        <button class="group-del" data-key="${esc(g.key)}" title="Xóa công ty & toàn bộ khách trong nhóm">🗑</button>
       </div>
       <div class="cards">${g.members.map(memberCard).join('')}</div>
     </div>`).join('');
 
+  // mở chi tiết khi bấm thẻ
   $$('#content .card').forEach((c) => c.onclick = () => openDetail(Number(c.dataset.id)));
+  // xóa nhanh 1 khách (chặn mở chi tiết)
+  $$('#content .card-del').forEach((b) => b.onclick = (e) => {
+    e.stopPropagation();
+    quickDeleteCustomer(Number(b.dataset.delId), b.dataset.name);
+  });
+  // xóa cả công ty
+  $$('#content .group-del').forEach((b) => b.onclick = () => {
+    const g = SHOWN_GROUPS.find((x) => x.key === b.dataset.key);
+    if (g) deleteCompany(g);
+  });
+}
+
+async function quickDeleteCustomer(id, name) {
+  if (!confirm(`Xóa khách hàng “${name}”?`)) return;
+  try { await api('DELETE', `/api/customers/${id}`); await loadList(); toast('Đã xóa khách hàng'); }
+  catch (e) { toast(e.message, 'err'); }
+}
+async function deleteCompany(g) {
+  const n = g.members.length;
+  if (!confirm(`Xóa công ty “${g.company}” và toàn bộ ${n} khách hàng trong nhóm?\nHành động này không hoàn tác được.`)) return;
+  try {
+    await Promise.all(g.members.map((m) => api('DELETE', `/api/customers/${m.id}`)));
+    await loadList(); toast(`Đã xóa ${n} khách của “${g.company}”`);
+  } catch (e) { toast(e.message, 'err'); }
 }
 
 // ---------- Avatar / products (form) ----------
@@ -420,7 +449,7 @@ async function logout() {
 // ---------- Theme ----------
 function setTheme(t) {
   document.documentElement.setAttribute('data-theme', t);
-  try { localStorage.setItem('nexus-theme', t); } catch {}
+  try { localStorage.setItem('gqcrm-theme', t); } catch {}
 }
 
 // ---------- bind ----------
@@ -449,6 +478,13 @@ function bind() {
   $('#lightbox').addEventListener('click', closeLightbox);
 
   $('#search').oninput = () => { clearTimeout(searchTimer); searchTimer = setTimeout(loadList, 250); };
+
+  // xuất CSV (theo bộ lọc tìm kiếm hiện tại)
+  $('#btnExport').onclick = () => {
+    const q = $('#search').value.trim();
+    window.location.href = '/api/export.csv' + (q ? `?q=${encodeURIComponent(q)}` : '');
+    toast('Đang tải file CSV…');
+  };
 
   // palette
   $('#openPalette').onclick = openPalette;
@@ -514,7 +550,7 @@ function bind() {
 }
 
 async function init() {
-  try { setTheme(localStorage.getItem('nexus-theme') || 'dark'); } catch {}
+  try { setTheme(localStorage.getItem('gqcrm-theme') || 'light'); } catch {}
   META = await api('GET', '/api/meta');
   const me = await api('GET', '/api/auth/me');
   ME = me.user || ME;

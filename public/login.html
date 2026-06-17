@@ -3,12 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Đăng nhập · CRM</title>
+  <title>GQCRM · Quản lý khách hàng</title>
+  <meta name="description" content="GQCRM — phần mềm quản lý khách hàng gọn nhẹ: nhập liệu, gom nhóm theo công ty, quản lý sản phẩm, bộ phận, chức vụ và phân quyền người dùng." />
+  <meta name="theme-color" content="#0ea36b" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="GQCRM" />
+  <meta property="og:title" content="GQCRM · Quản lý khách hàng" />
+  <meta property="og:description" content="Nhập liệu & lưu trữ thông tin khách hàng: gom nhóm công ty, sản phẩm, bộ phận/chức vụ, phân quyền. CRM gọn nhẹ cho doanh nghiệp." />
+  <meta property="og:image" content="{{ORIGIN}}/og-image.svg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="{{ORIGIN}}/" />
+  <meta property="og:locale" content="vi_VN" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GQCRM · Quản lý khách hàng" />
+  <meta name="twitter:description" content="Nhập liệu & lưu trữ thông tin khách hàng: gom nhóm công ty, sản phẩm, bộ phận/chức vụ, phân quyền." />
+  <meta name="twitter:image" content="{{ORIGIN}}/og-image.svg" />
   <style>
     :root { --accent: #0ea36b; --accent-dark: #0b855a; }
     * { box-sizing: border-box; }
+    html, body { height: 100%; }
     body {
-      margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 20px;
+      margin: 0; min-height: 100vh; min-height: 100dvh; height: 100dvh; overflow: hidden;
+      display: grid; place-items: center; padding: 16px;
       font-family: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
       color: #1c2733; background: #eef2f5;
     }
@@ -41,6 +63,21 @@
     .msg.ok { display: block; background: #e7f7ef; border: 1px solid #b6e6cf; color: #0b7a4f; }
     .hint { margin-top: 18px; text-align: center; font-size: 12px; color: #97a2ad; }
     .hint b { color: #6b7785; }
+
+    /* Card cuộn nội bộ nếu nội dung cao hơn màn (không để body cuộn) */
+    .card { max-height: calc(100dvh - 32px); overflow-y: auto; }
+
+    /* Màn thấp (điện thoại nằm ngang, máy nhỏ): nén khoảng cách cho vừa */
+    @media (max-height: 640px) {
+      .card { padding: 22px 24px; }
+      .logo { width: 42px; height: 42px; margin-bottom: 12px; font-size: 16px; }
+      h1 { font-size: 19px; }
+      p.sub { margin-bottom: 16px; }
+      label { margin: 10px 0 5px; }
+      input { padding: 10px 12px; }
+      button { margin-top: 16px; padding: 11px; }
+      .hint { margin-top: 12px; }
+    }
   </style>
 </head>
 <body>

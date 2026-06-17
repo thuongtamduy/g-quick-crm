@@ -1,9 +1,11 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const crypto = require('crypto');
 const db = require('./db');
 
 const app = express();
+app.set('trust proxy', true); // để req.protocol đúng https khi chạy sau reverse proxy
 const PORT = process.env.PORT || 4444;
 
 // ---- Mật khẩu (scrypt, built-in) ----
@@ -93,7 +95,10 @@ const INDUSTRIES = [
 app.use(express.json({ limit: '50mb' })); // đủ lớn cho nhiều ảnh base64
 
 // Các đường không cần đăng nhập
-const PUBLIC_PATHS = new Set(['/login.html', '/login.js', '/api/auth/login', '/favicon.ico']);
+const PUBLIC_PATHS = new Set([
+  '/login.html', '/login.js', '/api/auth/login',
+  '/favicon.ico', '/favicon.svg', '/og-image.svg', // để crawler lấy được ảnh preview khi share link
+]);
 
 // ---- Bảo vệ bằng session ----
 app.use((req, res, next) => {
@@ -226,6 +231,17 @@ for (const [key, table] of Object.entries(CATALOGS)) {
     res.json({ ok: true });
   });
 }
+
+// Phục vụ HTML có chèn URL tuyệt đối ({{ORIGIN}}) cho thẻ og:image / og:url
+function serveHtmlWithOrigin(file) {
+  return (req, res) => {
+    const origin = `${req.protocol}://${req.get('host')}`;
+    const html = fs.readFileSync(path.join(__dirname, 'public', file), 'utf8').replaceAll('{{ORIGIN}}', origin);
+    res.type('html').send(html);
+  };
+}
+app.get('/login.html', serveHtmlWithOrigin('login.html'));
+app.get(['/', '/index.html'], serveHtmlWithOrigin('index.html'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -399,6 +415,34 @@ app.put('/api/customers/:id', (req, res) => {
 app.delete('/api/customers/:id', (req, res) => {
   db.prepare('DELETE FROM customers WHERE id = ?').run(Number(req.params.id));
   res.json({ ok: true });
+});
+
+// ---- Xuất CSV (mở được bằng Excel, có BOM UTF-8 cho tiếng Việt) ----
+app.get('/api/export.csv', (req, res) => {
+  const q = (req.query.q || '').toString().trim().toLowerCase();
+  let rows = db.prepare('SELECT * FROM customers ORDER BY company_key, full_name').all();
+  if (q) {
+    rows = rows.filter((r) =>
+      [r.full_name, r.phone, r.email, r.company, r.department, r.position, r.industry]
+        .filter(Boolean).some((v) => v.toString().toLowerCase().includes(q)));
+  }
+  const esc = (v) => {
+    const s = (v ?? '').toString();
+    return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const header = ['Họ tên', 'Số điện thoại', 'Email', 'Công ty', 'Bộ phận', 'Chức vụ', 'Lĩnh vực', 'Ghi chú', 'Sản phẩm', 'Ngày tạo'];
+  const lines = [header.map(esc).join(',')];
+  for (const r of rows) {
+    const products = db.prepare('SELECT name, price FROM products WHERE customer_id = ? ORDER BY sort_order, id').all(r.id)
+      .map((p) => [p.name, p.price].filter(Boolean).join(' - ')).filter(Boolean).join(' | ');
+    lines.push([r.full_name, r.phone, r.email, r.company, r.department, r.position, r.industry, r.note, products, r.created_at]
+      .map(esc).join(','));
+  }
+  const csv = String.fromCharCode(0xfeff) + lines.join('\r\n'); // BOM để Excel đọc đúng UTF-8
+  const date = new Date().toISOString().slice(0, 10);
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="khach-hang-${date}.csv"`);
+  res.send(csv);
 });
 
 app.listen(PORT, () => {

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0a0a14"/>
+      <stop offset="1" stop-color="#12121f"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7c5cff"/>
+      <stop offset="1" stop-color="#19d3f3"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#7c5cff" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#7c5cff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#19d3f3" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#19d3f3" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="180" cy="120" r="320" fill="url(#glow1)"/>
+  <circle cx="1080" cy="560" r="320" fill="url(#glow2)"/>
+
+  <!-- Logo -->
+  <rect x="100" y="150" width="120" height="120" rx="30" fill="url(#accent)"/>
+  <text x="160" y="232" font-family="Arial, sans-serif" font-size="56" font-weight="800"
+        text-anchor="middle" fill="#ffffff" letter-spacing="1">GQ</text>
+
+  <!-- Tên + mô tả -->
+  <text x="100" y="380" font-family="Arial, sans-serif" font-size="92" font-weight="800" fill="#ffffff">GQCRM</text>
+  <text x="104" y="450" font-family="Arial, sans-serif" font-size="38" font-weight="600" fill="#19d3f3">Quản lý khách hàng</text>
+  <text x="104" y="510" font-family="Arial, sans-serif" font-size="30" fill="#9aa0b6">Nhập liệu · gom nhóm công ty · sản phẩm · phân quyền</text>
+
+  <rect x="100" y="548" width="1000" height="2" fill="#2a2a3d"/>
+  <text x="100" y="592" font-family="Arial, sans-serif" font-size="24" fill="#6a6f88">CRM gọn nhẹ · 2026</text>
+</svg>
