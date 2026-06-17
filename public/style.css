@@ -314,8 +314,13 @@ textarea { resize: vertical; }
 .dp-imgs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .dp-imgs img { width: 78px; height: 78px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border); cursor: zoom-in; }
 
-/* ============ Account / Users ============ */
+/* ============ Account / Users / Catalog ============ */
 .hint-small { font-size: 12px; color: var(--muted); margin: 8px 0 0; }
+.catalog-add { display: flex; gap: 8px; margin-bottom: 12px; }
+.catalog-add input { flex: 1; }
+.catalog-add .btn { flex: 0 0 auto; width: 46px; padding: 0; font-size: 18px; }
+.cat-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius-sm); background: var(--bg-2); border: 1px solid var(--border-strong); }
+.cat-row .c-name { flex: 1; font-size: 14px; }
 .user-list { display: flex; flex-direction: column; gap: 8px; }
 .user-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--bg-2); border: 1px solid var(--border-strong); }
 .user-row .u-av { width: 32px; height: 32px; border-radius: 9px; background: var(--accent-grad); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 13px; flex: 0 0 auto; }

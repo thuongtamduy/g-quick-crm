@@ -29,6 +29,7 @@
       <nav class="nav" id="industryNav"></nav>
 
       <div class="sidebar-foot">
+        <button class="theme-toggle" id="openCatalog">📂 Quản lý danh mục</button>
         <button class="theme-toggle" id="themeToggle">
           <span class="ti-dark">🌙 Tối</span>
           <span class="ti-light">☀️ Sáng</span>
@@ -131,10 +132,18 @@
             <input id="company" list="companyList" placeholder="Công ty TNHH ABC" />
             <datalist id="companyList"></datalist>
           </div>
-          <div class="field"><label class="lbl">Bộ phận</label><input id="department" placeholder="Kinh doanh" /></div>
+          <div class="field">
+            <label class="lbl">Bộ phận</label>
+            <input id="department" list="departmentList" placeholder="Chọn hoặc nhập mới…" />
+            <datalist id="departmentList"></datalist>
+          </div>
         </div>
         <div class="two">
-          <div class="field"><label class="lbl">Chức vụ</label><input id="position" placeholder="Trưởng phòng" /></div>
+          <div class="field">
+            <label class="lbl">Chức vụ</label>
+            <input id="position" list="positionList" placeholder="Chọn hoặc nhập mới…" />
+            <datalist id="positionList"></datalist>
+          </div>
           <div class="field"><label class="lbl">Lĩnh vực</label><select id="industry"></select></div>
         </div>
         <div class="field">
@@ -151,6 +160,34 @@
       <div class="drawer-foot">
         <button type="button" class="btn ghost" data-close-form>Hủy</button>
         <button type="submit" form="form" class="btn primary" id="btnSave">Lưu</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Catalog drawer (Bộ phận / Chức vụ) -->
+  <div class="drawer-wrap hidden" id="catalogWrap">
+    <div class="drawer-scrim" data-close-catalog></div>
+    <aside class="drawer" id="catalogDrawer">
+      <div class="drawer-head">
+        <h2>Quản lý danh mục</h2>
+        <button class="icon-btn" data-close-catalog>✕</button>
+      </div>
+      <div class="drawer-body">
+        <div class="sec-title">🏢 Bộ phận</div>
+        <form id="deptForm" class="catalog-add">
+          <input id="deptInput" placeholder="Thêm bộ phận mới…" autocomplete="off" />
+          <button type="submit" class="btn">＋</button>
+        </form>
+        <div id="deptList" class="user-list"></div>
+
+        <div class="sec-title" style="margin-top:26px">💼 Chức vụ</div>
+        <form id="posForm" class="catalog-add">
+          <input id="posInput" placeholder="Thêm chức vụ mới…" autocomplete="off" />
+          <button type="submit" class="btn">＋</button>
+        </form>
+        <div id="posList" class="user-list"></div>
+
+        <p class="hint-small" style="margin-top:18px">Các giá trị này hiện ra gợi ý khi nhập khách hàng. Khi bạn gõ một giá trị mới ở form khách hàng, nó cũng tự được thêm vào đây.</p>
       </div>
     </aside>
   </div>

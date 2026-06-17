@@ -44,8 +44,8 @@ Mở **http://localhost:4444** → đăng nhập lần đầu bằng **admin / a
 3. Email
 4. Ảnh đại diện *(tải lên, lưu base64)*
 5. Công ty — **cùng công ty tự gom về chung nhóm** (chuẩn hóa tên, bỏ dấu & hậu tố "TNHH/CP/Cty..." nên "Công ty TNHH ABC" = "Cty ABC")
-6. Bộ phận
-7. Chức vụ
+6. Bộ phận — chọn từ **danh mục quản lý được** hoặc nhập mới (tự thêm vào danh mục)
+7. Chức vụ — tương tự, có danh mục riêng
 8. Lĩnh vực — 10 ngành lớn + "Khác"
 9. Sản phẩm — mỗi sản phẩm gồm **3 hình ảnh, ghi chú, giá**; thêm nhiều sản phẩm tùy ý
 10. Ghi chú

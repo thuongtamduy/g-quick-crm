@@ -30,6 +30,22 @@ function seedDefaultAdmin() {
 }
 seedDefaultAdmin();
 
+// Seed danh mục Bộ phận / Chức vụ mặc định (chỉ khi bảng trống)
+function seedCatalog(table, values) {
+  if (db.prepare(`SELECT COUNT(*) AS c FROM ${table}`).get().c === 0) {
+    const ins = db.prepare(`INSERT OR IGNORE INTO ${table} (name) VALUES (?)`);
+    values.forEach((v) => ins.run(v));
+  }
+}
+seedCatalog('departments', [
+  'Ban giám đốc', 'Kinh doanh', 'Marketing', 'Kỹ thuật', 'Sản xuất',
+  'Nhân sự', 'Kế toán - Tài chính', 'Chăm sóc khách hàng', 'Mua hàng', 'Pháp lý',
+]);
+seedCatalog('positions', [
+  'Nhân viên', 'Chuyên viên', 'Trưởng nhóm', 'Phó phòng', 'Trưởng phòng',
+  'Phó giám đốc', 'Giám đốc', 'Tổng giám đốc', 'Chủ tịch', 'Trợ lý',
+]);
+
 // ---- Cookie / session ----
 function parseCookies(req) {
   const out = {};
@@ -184,6 +200,33 @@ app.delete('/api/users/:id', requireAdmin, (req, res) => {
   res.json({ ok: true });
 });
 
+// ---- Danh mục Bộ phận / Chức vụ ----
+const CATALOGS = { departments: 'departments', positions: 'positions' };
+
+// Thêm giá trị vào danh mục nếu chưa có (dùng khi lưu khách hàng có giá trị custom)
+function ensureCatalogValue(table, name) {
+  const v = (name || '').trim();
+  if (!v) return;
+  db.prepare(`INSERT OR IGNORE INTO ${table} (name) VALUES (?)`).run(v);
+}
+
+for (const [key, table] of Object.entries(CATALOGS)) {
+  app.get(`/api/${key}`, (req, res) => {
+    res.json(db.prepare(`SELECT id, name FROM ${table} ORDER BY name COLLATE NOCASE`).all());
+  });
+  app.post(`/api/${key}`, (req, res) => {
+    const name = (req.body?.name || '').trim();
+    if (!name) return res.status(400).json({ error: 'Tên không được trống' });
+    db.prepare(`INSERT OR IGNORE INTO ${table} (name) VALUES (?)`).run(name);
+    const row = db.prepare(`SELECT id, name FROM ${table} WHERE name = ? COLLATE NOCASE`).get(name);
+    res.json(row);
+  });
+  app.delete(`/api/${key}/:id`, (req, res) => {
+    db.prepare(`DELETE FROM ${table} WHERE id = ?`).run(Number(req.params.id));
+    res.json({ ok: true });
+  });
+}
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Chuẩn hóa tên công ty để gom nhóm (bỏ dấu, hậu tố pháp lý, khoảng trắng thừa)
@@ -230,7 +273,13 @@ function saveProducts(customerId, products) {
 // ---- API ----
 
 app.get('/api/meta', (req, res) => {
-  res.json({ industries: INDUSTRIES, user: req.user.username, role: req.user.role });
+  res.json({
+    industries: INDUSTRIES,
+    departments: db.prepare('SELECT name FROM departments ORDER BY name COLLATE NOCASE').all().map((r) => r.name),
+    positions: db.prepare('SELECT name FROM positions ORDER BY name COLLATE NOCASE').all().map((r) => r.name),
+    user: req.user.username,
+    role: req.user.role,
+  });
 });
 
 // Danh sách khách hàng, gom theo công ty
@@ -307,6 +356,8 @@ app.post('/api/customers', (req, res) => {
       industry: b.industry || null,
       note: b.note || null,
     });
+  ensureCatalogValue('departments', b.department);
+  ensureCatalogValue('positions', b.position);
   saveProducts(info.lastInsertRowid, b.products);
   res.json(getCustomerFull(info.lastInsertRowid));
 });
@@ -339,6 +390,8 @@ app.put('/api/customers/:id', (req, res) => {
     industry: b.industry || null,
     note: b.note || null,
   });
+  ensureCatalogValue('departments', b.department);
+  ensureCatalogValue('positions', b.position);
   saveProducts(id, b.products);
   res.json(getCustomerFull(id));
 });

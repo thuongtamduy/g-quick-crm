@@ -239,6 +239,7 @@ function openForm(c) {
   $('#industry').innerHTML = '<option value="">— Chọn lĩnh vực —</option>' +
     META.industries.map((i) => `<option value="${esc(i)}">${esc(i)}</option>`).join('');
   $('#industry').value = c?.industry || '';
+  populateDatalists();
   setAvatar(c?.avatar || null);
   (c?.products || []).forEach(addProductCard);
   $('#detailWrap').classList.add('hidden');
@@ -261,7 +262,7 @@ async function saveForm(e) {
   try {
     if (id) await api('PUT', `/api/customers/${id}`, payload);
     else await api('POST', '/api/customers', payload);
-    closeForm(); await loadList();
+    closeForm(); await loadList(); await refreshCatalogs(); // giá trị custom có thể vừa được thêm
     toast(id ? 'Đã cập nhật' : 'Đã thêm khách hàng');
   } catch (err) { toast(err.message, 'err'); }
   finally { btn.disabled = false; btn.textContent = 'Lưu'; }
@@ -338,6 +339,39 @@ function palMove(d) {
 // ---------- Lightbox ----------
 function openLightbox(src) { $('#lightboxImg').src = src; $('#lightbox').classList.remove('hidden'); }
 function closeLightbox() { $('#lightbox').classList.add('hidden'); $('#lightboxImg').removeAttribute('src'); }
+
+// ---------- Danh mục: Bộ phận / Chức vụ ----------
+function populateDatalists() {
+  $('#departmentList').innerHTML = (META.departments || []).map((d) => `<option value="${esc(d)}">`).join('');
+  $('#positionList').innerHTML = (META.positions || []).map((p) => `<option value="${esc(p)}">`).join('');
+}
+async function refreshCatalogs() {
+  const m = await api('GET', '/api/meta');
+  META.departments = m.departments || [];
+  META.positions = m.positions || [];
+  populateDatalists();
+}
+function openCatalog() {
+  $('#catalogWrap').classList.remove('hidden');
+  renderCatalog();
+}
+function closeCatalog() { $('#catalogWrap').classList.add('hidden'); }
+
+async function renderCatalog() {
+  const [depts, poss] = await Promise.all([api('GET', '/api/departments'), api('GET', '/api/positions')]);
+  const row = (kind, item) => `
+    <div class="cat-row">
+      <span class="c-name">${esc(item.name)}</span>
+      <button class="icon-btn" data-kind="${kind}" data-del="${item.id}" data-name="${esc(item.name)}" title="Xóa">🗑</button>
+    </div>`;
+  $('#deptList').innerHTML = depts.map((d) => row('departments', d)).join('') || '<p class="hint-small">Chưa có bộ phận nào.</p>';
+  $('#posList').innerHTML = poss.map((p) => row('positions', p)).join('') || '<p class="hint-small">Chưa có chức vụ nào.</p>';
+  $$('#catalogWrap [data-del]').forEach((b) => b.onclick = async () => {
+    if (!confirm(`Xóa "${b.dataset.name}" khỏi danh mục?`)) return;
+    try { await api('DELETE', `/api/${b.dataset.kind}/${b.dataset.del}`); await renderCatalog(); await refreshCatalogs(); toast('Đã xóa'); }
+    catch (e) { toast(e.message, 'err'); }
+  });
+}
 
 // ---------- Account & Users ----------
 function openAccount() {
@@ -445,6 +479,19 @@ function bind() {
     } catch (err) { toast(err.message, 'err'); }
   };
 
+  // danh mục (bộ phận / chức vụ)
+  $('#openCatalog').onclick = () => { app.classList.remove('rail-on'); openCatalog(); };
+  $$('[data-close-catalog]').forEach((b) => b.onclick = closeCatalog);
+  const addCatalog = (kind, inputId) => async (e) => {
+    e.preventDefault();
+    const name = $(inputId).value.trim();
+    if (!name) return;
+    try { await api('POST', `/api/${kind}`, { name }); $(inputId).value = ''; await renderCatalog(); await refreshCatalogs(); toast('Đã thêm'); }
+    catch (err) { toast(err.message, 'err'); }
+  };
+  $('#deptForm').onsubmit = addCatalog('departments', '#deptInput');
+  $('#posForm').onsubmit = addCatalog('positions', '#posInput');
+
   // theme
   $('#themeToggle').onclick = () => setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
 
@@ -458,6 +505,7 @@ function bind() {
     if (e.key === 'Escape') {
       if (!$('#lightbox').classList.contains('hidden')) return closeLightbox();
       if (!$('#paletteWrap').classList.contains('hidden')) return closePalette();
+      if (!$('#catalogWrap').classList.contains('hidden')) return closeCatalog();
       if (!$('#accountWrap').classList.contains('hidden')) return closeAccount();
       if (!$('#formWrap').classList.contains('hidden')) return closeForm();
       if (!$('#detailWrap').classList.contains('hidden')) return closeDetail();
